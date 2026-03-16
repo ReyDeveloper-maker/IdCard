@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>syre's world</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #d4eeff;
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 30px 16px;
+  }
+
+  .outer-wrapper {
+    background: #b8dcf5;
+    border-radius: 22px;
+    padding: 16px;
+    border: 2.5px solid #aaccee;
+    width: 480px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── TOP NAV ── */
+  .top-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .nav-pill {
+    background: #f8b8d8;
+    border: 2.5px solid #e080b0;
+    border-radius: 50px;
+    padding: 7px 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #444;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    line-height: 1;
+  }
+  .nav-pill:hover { background: #f5a0cc; transform: scale(1.03); }
+  .nav-pill.active { background: #f080b8; color: #fff; }
+  .nav-pill [contenteditable] {
+    outline: none;
+    min-width: 20px;
+    display: inline-block;
+  }
+  .nav-pill [contenteditable]:focus {
+    text-decoration: underline dotted #c050a0;
+  }
+
+  /* ── MAIN CARD ── */
+  .main-card {
+    background: #e8f7e4;
+    border: 2.5px solid #b0d8a8;
+    border-radius: 18px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .handle-pill {
+    background: #fff;
+    border: 2px solid #c0ddb8;
+    border-radius: 50px;
+    padding: 5px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: #555;
+    outline: none;
+    min-width: 80px;
+    max-width: 200px;
+    width: auto;
+  }
+  .handle-pill:focus { border-color: #f080b8; }
+
+  .win-controls { display: flex; gap: 6px; }
+  .win-btn {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    border: 2px solid #b0d8a8;
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #666;
+    outline: none;
+    transition: background 0.15s;
+  }
+  .win-btn:hover { background: #e0f0dc; }
+
+  /* card body */
+  .card-body {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .profile-img-wrap {
+    flex-shrink: 0;
+    width: 108px;
+    min-height: 120px;
+    border-radius: 12px;
+    border: 2.5px solid #b0d8a8;
+    overflow: hidden;
+    background: #d0e8c8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .profile-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .profile-img-wrap .img-placeholder {
+    font-size: 10px; color: #999;
+    text-align: center; padding: 10px 6px;
+    line-height: 1.6;
+    font-family: 'Space Mono', monospace;
+  }
+  .profile-img-wrap input[type=file] { display: none; }
+
+  .info-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .info-block {
+    background: #fff;
+    border: 1.5px solid #c8e0c0;
+    border-radius: 10px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .info-timestamp {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #bbb;
+    line-height: 1;
+  }
+
+  .info-textarea {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.45;
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    resize: none;
+    overflow: hidden;
+    padding: 0;
+    min-height: 18px;
+    display: block;
+  }
+  .info-textarea:focus {
+    outline: 1px dashed #f080b8;
+    border-radius: 3px;
+    padding: 1px 3px;
+  }
+
+  /* ── PANELS ── */
+  .panel { display: none; flex-direction: column; gap: 10px; }
+
+  .panel-header {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    padding-bottom: 8px;
+    border-bottom: 1.5px dashed #b0d8a8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* ── 001 POSTS ── */
+  .add-post-btn {
+    background: #f8b8d8;
+    border: 1.5px solid #e080b0;
+    border-radius: 50px;
+    padding: 3px 11px;
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    cursor: pointer;
+    outline: none;
+    color: #555;
+    transition: background 0.15s;
+  }
+  .add-post-btn:hover { background: #f5a0cc; }
+
+  .post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .post-list::-webkit-scrollbar { width: 4px; }
+  .post-list::-webkit-scrollbar-thumb { background: #e0b8d0; border-radius: 4px; }
+
+  .post-card {
+    background: #fff;
+    border: 1.5px solid #c8e0c0;
+    border-radius: 12px;
+    padding: 9px 11px;
+  }
+  .post-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .post-date { font-family: 'Space Mono', monospace; font-size: 10px; color: #bbb; }
+  .post-delete {
+    background: none; border: none; color: #ddd;
+    cursor: pointer; font-size: 12px; line-height: 1;
+    padding: 0; transition: color 0.15s;
+  }
+  .post-delete:hover { color: #f080b8; }
+
+  .post-content {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    color: #444;
+    line-height: 1.5;
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    resize: none;
+    overflow: hidden;
+    padding: 0;
+    min-height: 20px;
+    display: block;
+  }
+  .post-content:focus {
+    outline: 1px dashed #f080b8;
+    border-radius: 3px;
+    padding: 1px 3px;
+  }
+
+  /* ── 002 ABOUT ── */
+  .about-section {
+    background: #fff;
+    border: 1.5px solid #c8e0c0;
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .about-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .about-content {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    color: #444;
+    line-height: 1.6;
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 100%;
+    resize: none;
+    overflow: hidden;
+    padding: 0;
+    min-height: 20px;
+    display: block;
+  }
+  .about-content:focus {
+    outline: 1px dashed #f080b8;
+    border-radius: 3px;
+    padding: 1px 3px;
+  }
+
+  .about-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 2px;
+  }
+  .about-tag {
+    background: #fce8f3;
+    border: 1.5px solid #e8b8d8;
+    border-radius: 50px;
+    padding: 3px 11px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: #c060a0;
+    cursor: text;
+    outline: none;
+    display: inline-block;
+    min-width: 10px;
+  }
+  .about-tag:focus { outline: 1px dashed #f080b8; border-radius: 50px; }
+  .add-tag-btn {
+    background: #edf8ea;
+    border: 1.5px dashed #a8d8a0;
+    border-radius: 50px;
+    padding: 3px 11px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: #88b880;
+    cursor: pointer;
+    outline: none;
+  }
+  .add-tag-btn:hover { background: #d8f0d4; }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar { display: flex; gap: 8px; }
+  .bottom-pill {
+    background: #f8b8d8;
+    border: 2.5px solid #e080b0;
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .bottom-pill [contenteditable] {
+    outline: none;
+    min-width: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+  .bottom-pill [contenteditable]:focus {
+    text-decoration: underline dotted #c050a0;
+    white-space: normal;
+  }
+
+  /* ── SAVE BAR ── */
+  .save-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .save-bar-top {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+  }
+  .save-bar-bottom {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+  }
+  .save-btn {
+    flex-shrink: 0;
+    background: #a8d8f8;
+    border: 2.5px solid #70b0e8;
+    border-radius: 50px;
+    padding: 8px 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: #224488;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .save-btn:hover { background: #88ccf8; transform: scale(1.03); }
+  .save-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .save-status {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: none;
+  }
+
+  .share-link-wrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 2px solid #a0c8e8;
+    border-radius: 50px;
+    padding: 0 12px;
+    transition: border-color 0.15s;
+    overflow: hidden;
+  }
+  .share-link-wrap:focus-within { border-color: #70b0e8; }
+
+  .share-link-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 8px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #446688;
+    cursor: text;
+    width: 100%;
+  }
+  .share-link-input::placeholder { color: #b0c8e0; font-style: italic; }
+
+  .open-link-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 0 2px 6px;
+    color: #70a8d8;
+    line-height: 1;
+    transition: color 0.15s;
+    display: none;
+  }
+  .open-link-btn:hover { color: #3070b8; }
+
+  .copy-btn {
+    flex-shrink: 0;
+    background: #c8f0c8;
+    border: 2px solid #88cc88;
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: #336633;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .copy-btn:hover { background: #a8e8a8; transform: scale(1.03); }
+
+  /* ── MOBILE TWEAKS ── */
+  @media (max-width: 480px) {
+    body { padding: 16px 10px; }
+    .outer-wrapper { width: 100%; padding: 12px; gap: 10px; }
+    .top-nav { gap: 6px; }
+    .nav-pill { padding: 6px 12px; font-size: 11px; }
+    .card-body { gap: 10px; }
+    .profile-img-wrap { width: 88px; min-height: 96px; }
+    .bottom-bar { gap: 6px; }
+    .bottom-pill { padding: 7px 10px; font-size: 11px; }
+    .save-btn { padding: 7px 14px; font-size: 10px; }
+    .copy-btn { padding: 7px 12px; font-size: 10px; }
+    .share-link-input { font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+<div class="outer-wrapper">
+
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <button class="nav-pill" id="titleBtn" onclick="goHome()">
+      <span id="siteTitle" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">syre's world</span>
+    </button>
+    <button class="nav-pill folder" id="btn001" onclick="showPanel('001')">
+      📁&nbsp;<span contenteditable="true" spellcheck="false" id="label001" onclick="event.stopPropagation()">001</span>
+    </button>
+    <button class="nav-pill folder" id="btn002" onclick="showPanel('002')">
+      📁&nbsp;<span contenteditable="true" spellcheck="false" id="label002" onclick="event.stopPropagation()">002</span>
+    </button>
+  </div>
+
+  <!-- HOME PANEL -->
+  <div class="main-card" id="homePanel">
+    <div class="card-header">
+      <input class="handle-pill" type="text" id="handleInput" value="@ boltcutters" spellcheck="false">
+      <div class="win-controls">
+        <button class="win-btn">✕</button>
+        <button class="win-btn">−</button>
+        <button class="win-btn">⧉</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="profile-img-wrap" title="Click to upload photo" onclick="document.getElementById('imgUpload').click()">
+        <img id="profileImg" src="" alt="" style="display:none;">
+        <div class="img-placeholder" id="imgPlaceholder">📷<br>tap to<br>upload</div>
+        <input type="file" id="imgUpload" accept="image/*" onchange="loadProfileImg(event)">
+      </div>
+      <div class="info-section">
+        <div class="info-block">
+          <div class="info-timestamp">&gt; Today at 2:40 PM</div>
+          <textarea class="info-textarea" id="nameBlock" spellcheck="false">syre or ezra 🐦 filipino s/her  wonbin's girlfriend</textarea>
+        </div>
+        <div class="info-block">
+          <div class="info-timestamp">&gt; Today at 2:40 PM</div>
+          <textarea class="info-textarea" id="noteBlock" spellcheck="false">note: I disappear and deactivate my accounts regularly during hiatus</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 001 – RECENT POSTS -->
+  <div class="main-card panel" id="panel001">
+    <div class="panel-header">
+      <span>📁 recent posts</span>
+      <button class="add-post-btn" onclick="addPost()">+ add post</button>
+    </div>
+    <div class="post-list" id="postList">
+      <div class="post-card">
+        <div class="post-card-header">
+          <span class="post-date">&gt; Today at 2:40 PM</span>
+          <button class="post-delete" onclick="deletePost(this)">✕</button>
+        </div>
+        <textarea class="post-content" spellcheck="false">just woke up and everything feels soft and pink ♡</textarea>
+      </div>
+      <div class="post-card">
+        <div class="post-card-header">
+          <span class="post-date">&gt; Yesterday at 11:30 PM</span>
+          <button class="post-delete" onclick="deletePost(this)">✕</button>
+        </div>
+        <textarea class="post-content" spellcheck="false">listening to alcohol free on loop again. no thoughts head empty 🌙</textarea>
+      </div>
+      <div class="post-card">
+        <div class="post-card-header">
+          <span class="post-date">&gt; 2 days ago</span>
+          <button class="post-delete" onclick="deletePost(this)">✕</button>
+        </div>
+        <textarea class="post-content" spellcheck="false">hiatus soon but i'll be back !! don't miss me too much 🌸</textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 002 – ABOUT -->
+  <div class="main-card panel" id="panel002">
+    <div class="panel-header">
+      <span>📁 about / desc</span>
+    </div>
+    <div class="about-section">
+      <div class="about-label">✦ about me</div>
+      <textarea class="about-content" spellcheck="false">hi i'm syre / ezra !! i'm filipino and i use she/her pronouns. i love kpop, wonbin, and disappearing from the internet. i'll always come back tho 🌸</textarea>
+    </div>
+    <div class="about-section">
+      <div class="about-label">✦ interests</div>
+      <textarea class="about-content" spellcheck="false">kpop ✦ nct / riize ✦ reading ✦ aesthetic stuff ✦ flowers ✦ pastel everything</textarea>
+    </div>
+    <div class="about-section">
+      <div class="about-label">✦ tags</div>
+      <div class="about-tags" id="tagList">
+        <span class="about-tag" contenteditable="true" spellcheck="false">#kpop</span>
+        <span class="about-tag" contenteditable="true" spellcheck="false">#filipino</span>
+        <span class="about-tag" contenteditable="true" spellcheck="false">#riize</span>
+        <span class="about-tag" contenteditable="true" spellcheck="false">#wonbin</span>
+        <span class="about-tag" contenteditable="true" spellcheck="false">#hiatus</span>
+        <button class="add-tag-btn" onclick="addTag()">+ tag</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <div class="bottom-pill">
+      <span>♪</span>
+      <span contenteditable="true" spellcheck="false" id="songText">alcohol free - twice</span>
+    </div>
+    <div class="bottom-pill">
+      <span>🐾</span>
+      <span contenteditable="true" spellcheck="false" id="clickText">click me</span>
+    </div>
+  </div>
+
+  <!-- SAVE / SHARE BAR -->
+  <div class="save-bar">
+    <div class="save-bar-top">
+      <button class="save-btn" id="saveBtn" onclick="saveAndShare()">💾 save</button>
+      <span class="save-status" id="saveStatus"></span>
+    </div>
+    <div class="save-bar-bottom">
+      <div class="share-link-wrap">
+        <input class="share-link-input" type="text" id="shareLink" placeholder="click 💾 save to generate your link…" readonly>
+        <button class="open-link-btn" id="openLinkBtn" title="open in new tab" onclick="openLink()">🔗</button>
+      </div>
+      <button class="copy-btn" onclick="copyLink()">copy</button>
+    </div>
+  </div>
+
+</div>
+<script>
+/* ══════════════════════════════════════
+   AUTO-RESIZE TEXTAREAS
+══════════════════════════════════════ */
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+function initTextareas(root) {
+  (root || document).querySelectorAll('textarea').forEach(ta => {
+    autoResize(ta);
+    // avoid duplicate listeners
+    if (!ta._arInit) {
+      ta._arInit = true;
+      ta.addEventListener('input', () => autoResize(ta));
+    }
+  });
+}
+
+/* ══════════════════════════════════════
+   PANEL NAVIGATION
+══════════════════════════════════════ */
+let currentPanel = 'home';
+
+function showPanel(id) {
+  ['001','002'].forEach(n => {
+    document.getElementById('btn' + n).classList.remove('active');
+    document.getElementById('panel' + n).style.display = 'none';
+  });
+
+  if (currentPanel === id) {
+    currentPanel = 'home';
+    document.getElementById('homePanel').style.display = 'flex';
+    return;
+  }
+  currentPanel = id;
+  document.getElementById('homePanel').style.display = 'none';
+  const panel = document.getElementById('panel' + id);
+  panel.style.display = 'flex';
+  document.getElementById('btn' + id).classList.add('active');
+  // re-init textareas now visible
+  setTimeout(() => initTextareas(panel), 10);
+}
+
+function goHome() {
+  currentPanel = 'home';
+  ['001','002'].forEach(n => {
+    document.getElementById('btn' + n).classList.remove('active');
+    document.getElementById('panel' + n).style.display = 'none';
+  });
+  document.getElementById('homePanel').style.display = 'flex';
+}
+
+// initial state
+document.getElementById('panel001').style.display = 'none';
+document.getElementById('panel002').style.display = 'none';
+
+/* ══════════════════════════════════════
+   PROFILE IMAGE
+══════════════════════════════════════ */
+function loadProfileImg(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = document.getElementById('profileImg');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('imgPlaceholder').style.display = 'none';
+    window._imgData = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ══════════════════════════════════════
+   POSTS
+══════════════════════════════════════ */
+function getNow() {
+  const now = new Date();
+  let h = now.getHours();
+  const m = now.getMinutes().toString().padStart(2,'0');
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `Today at ${h}:${m} ${ampm}`;
+}
+
+function addPost() {
+  const list = document.getElementById('postList');
+  const div = document.createElement('div');
+  div.className = 'post-card';
+  div.innerHTML = `
+    <div class="post-card-header">
+      <span class="post-date">&gt; ${getNow()}</span>
+      <button class="post-delete" onclick="deletePost(this)">✕</button>
+    </div>
+    <textarea class="post-content" spellcheck="false" placeholder="write something..."></textarea>
+  `;
+  list.prepend(div);
+  const ta = div.querySelector('textarea');
+  ta._arInit = true;
+  ta.addEventListener('input', () => autoResize(ta));
+  autoResize(ta);
+  ta.focus();
+}
+
+function deletePost(btn) {
+  btn.closest('.post-card').remove();
+}
+
+/* ══════════════════════════════════════
+   TAGS
+══════════════════════════════════════ */
+function addTag() {
+  const tagList = document.getElementById('tagList');
+  const addBtn = tagList.querySelector('.add-tag-btn');
+  const tag = document.createElement('span');
+  tag.className = 'about-tag';
+  tag.contentEditable = 'true';
+  tag.spellcheck = false;
+  tag.textContent = '#newtag';
+  tag.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); tag.blur(); }
+  });
+  tagList.insertBefore(tag, addBtn);
+  const range = document.createRange();
+  range.selectNodeContents(tag);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  tag.focus();
+}
+
+/* ══════════════════════════════════════
+   GATHER / LOAD STATE
+══════════════════════════════════════ */
+function gatherState() {
+  const posts = [];
+  document.querySelectorAll('#postList .post-card').forEach(card => {
+    posts.push({
+      date: card.querySelector('.post-date').textContent,
+      content: card.querySelector('.post-content').value
+    });
+  });
+  const tags = [];
+  document.querySelectorAll('#tagList .about-tag').forEach(t => tags.push(t.textContent));
+  const aboutSections = [];
+  document.querySelectorAll('#panel002 .about-content').forEach(t => aboutSections.push(t.value));
+
+  return {
+    v: 2,
+    siteTitle:    document.getElementById('siteTitle').textContent.trim(),
+    handle:       document.getElementById('handleInput').value,
+    label001:     document.getElementById('label001').textContent.trim(),
+    label002:     document.getElementById('label002').textContent.trim(),
+    nameBlock:    document.getElementById('nameBlock').value,
+    noteBlock:    document.getElementById('noteBlock').value,
+    songText:     document.getElementById('songText').textContent.trim(),
+    clickText:    document.getElementById('clickText').textContent.trim(),
+    profileImg:   window._imgData || null,
+    posts,
+    aboutSections,
+    tags
+  };
+}
+
+function loadState(s) {
+  if (!s) return;
+  if (s.siteTitle)  document.getElementById('siteTitle').textContent = s.siteTitle;
+  if (s.handle)     document.getElementById('handleInput').value = s.handle;
+  if (s.label001)   document.getElementById('label001').textContent = s.label001;
+  if (s.label002)   document.getElementById('label002').textContent = s.label002;
+  if (s.nameBlock !== undefined) document.getElementById('nameBlock').value = s.nameBlock;
+  if (s.noteBlock !== undefined) document.getElementById('noteBlock').value = s.noteBlock;
+  if (s.songText)   document.getElementById('songText').textContent = s.songText;
+  if (s.clickText)  document.getElementById('clickText').textContent = s.clickText;
+
+  if (s.profileImg) {
+    const img = document.getElementById('profileImg');
+    img.src = s.profileImg;
+    img.style.display = 'block';
+    document.getElementById('imgPlaceholder').style.display = 'none';
+    window._imgData = s.profileImg;
+  }
+
+  if (s.posts && s.posts.length) {
+    const list = document.getElementById('postList');
+    list.innerHTML = '';
+    s.posts.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'post-card';
+      div.innerHTML = `
+        <div class="post-card-header">
+          <span class="post-date">${p.date}</span>
+          <button class="post-delete" onclick="deletePost(this)">✕</button>
+        </div>
+        <textarea class="post-content" spellcheck="false"></textarea>
+      `;
+      div.querySelector('textarea').value = p.content;
+      list.appendChild(div);
+    });
+  }
+
+  if (s.aboutSections && s.aboutSections.length) {
+    document.querySelectorAll('#panel002 .about-content').forEach((ta, i) => {
+      if (s.aboutSections[i] !== undefined) ta.value = s.aboutSections[i];
+    });
+  }
+
+  if (s.tags && s.tags.length) {
+    const tagList = document.getElementById('tagList');
+    const addBtn = tagList.querySelector('.add-tag-btn');
+    tagList.querySelectorAll('.about-tag').forEach(t => t.remove());
+    s.tags.forEach(t => {
+      const tag = document.createElement('span');
+      tag.className = 'about-tag';
+      tag.contentEditable = 'true';
+      tag.spellcheck = false;
+      tag.textContent = t;
+      tag.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); tag.blur(); } });
+      tagList.insertBefore(tag, addBtn);
+    });
+  }
+
+  setTimeout(() => initTextareas(), 30);
+}
+
+/* ══════════════════════════════════════
+   SAVE & SHARE
+   Strategy:
+   - Always save to localStorage (works everywhere, instant)
+   - Build a ?d= URL and show it in the link field
+   - On file:// the URL won't be shareable across devices,
+     but it WILL reload your own page correctly
+   - On http://localhost or any hosted URL it works fully
+══════════════════════════════════════ */
+function toUrlSafeB64(str) {
+  return btoa(unescape(encodeURIComponent(str)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function fromUrlSafeB64(b64) {
+  const s = b64.replace(/-/g, '+').replace(/_/g, '/');
+  const pad = s.length % 4 === 0 ? '' : '===='.slice(s.length % 4);
+  return decodeURIComponent(escape(atob(s + pad)));
+}
+
+function setLinkField(url) {
+  const input = document.getElementById('shareLink');
+  const openBtn = document.getElementById('openLinkBtn');
+  input.value = url;
+  input.title = url;
+  if (url) {
+    openBtn.style.display = 'inline-block';
+  }
+}
+
+function openLink() {
+  const url = document.getElementById('shareLink').value;
+  if (url) window.open(url, '_blank');
+}
+
+function saveAndShare() {
+  const btn    = document.getElementById('saveBtn');
+  const status = document.getElementById('saveStatus');
+
+  btn.disabled = true;
+  btn.textContent = '⏳…';
+  status.style.display = 'none';
+
+  try {
+    const state = gatherState();
+    const json  = JSON.stringify(state);
+
+    // 1) Always save to localStorage — works on file:// and http://
+    try { localStorage.setItem('syreworld_v2', json); } catch(e) {}
+
+    // 2) Build the shareable URL
+    const enc  = toUrlSafeB64(json);
+    const base = window.location.origin + window.location.pathname;
+    const url  = base + '?d=' + enc;
+
+    // 3) Update browser URL bar without reload (only works on http/https)
+    try {
+      if (window.location.protocol !== 'file:') {
+        history.replaceState(null, '', '?d=' + enc);
+      }
+    } catch(e) {}
+
+    // 4) Show the link
+    setLinkField(url);
+
+    btn.disabled = false;
+    btn.textContent = '💾 save';
+
+    // Show appropriate success message
+    const isFile = window.location.protocol === 'file:';
+    status.textContent = isFile ? '✓ saved locally!' : '✓ saved + link ready!';
+    status.style.color = '#558855';
+    status.style.display = 'inline';
+    setTimeout(() => status.style.display = 'none', 3000);
+
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = '💾 save';
+    status.textContent = '⚠ error saving';
+    status.style.color = '#cc4444';
+    status.style.display = 'inline';
+    setTimeout(() => status.style.display = 'none', 3000);
+    console.error('Save error:', err);
+  }
+}
+
+function copyLink() {
+  const val    = document.getElementById('shareLink').value;
+  const status = document.getElementById('saveStatus');
+  if (!val) {
+    status.textContent = '⚠ save first!';
+    status.style.color = '#cc8844';
+    status.style.display = 'inline';
+    setTimeout(() => status.style.display = 'none', 2000);
+    return;
+  }
+
+  function flash(msg, color) {
+    status.textContent = msg;
+    status.style.color = color || '#558855';
+    status.style.display = 'inline';
+    setTimeout(() => status.style.display = 'none', 2200);
+  }
+
+  // Try modern clipboard API first
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(val)
+      .then(() => flash('✓ copied!'))
+      .catch(() => fallbackCopy(val, flash));
+  } else {
+    fallbackCopy(val, flash);
+  }
+}
+
+function fallbackCopy(val, flash) {
+  // Works on http, https, and file://
+  const ta = document.createElement('textarea');
+  ta.value = val;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:0;left:0;width:2px;height:2px;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  // Also set selection range for iOS
+  ta.setSelectionRange(0, 99999);
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  if (ok) {
+    flash('✓ copied!');
+  } else {
+    // Last resort: select the input so user can manually copy
+    const input = document.getElementById('shareLink');
+    input.removeAttribute('readonly');
+    input.focus();
+    input.select();
+    input.setSelectionRange(0, 99999);
+    input.setAttribute('readonly', '');
+    flash('select + copy manually', '#cc8844');
+  }
+}
+
+/* ══════════════════════════════════════
+   BOOT
+══════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  initTextareas();
+
+  // 1) Try URL param ?d= (works on localhost & hosted)
+  const params = new URLSearchParams(window.location.search);
+  const d = params.get('d');
+  if (d) {
+    try {
+      loadState(JSON.parse(fromUrlSafeB64(d)));
+      // Show the current URL in share field
+      setLinkField(window.location.href);
+      return;
+    } catch(e) { console.warn('URL state parse failed:', e); }
+  }
+
+  // 2) Fallback: localStorage (works on file:// and http://)
+  try {
+    const saved = localStorage.getItem('syreworld_v2');
+    if (saved) {
+      loadState(JSON.parse(saved));
+      // Rebuild the link from saved data so it's ready to copy
+      const enc  = toUrlSafeB64(saved);
+      const base = window.location.origin + window.location.pathname;
+      setLinkField(base + '?d=' + enc);
+    }
+  } catch(e) { console.warn('localStorage load failed:', e); }
+});
+</script>
+</body>
+</html>
